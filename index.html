@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>First Conditional Lab — A2 Self-Learning Experience</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Smooth animations for step transitions and feedback */
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .animate-fade-in {
+      animation: fadeSlideUp 0.35s ease-out forwards;
+    }
+    /* Hide scrollbar on step navigation for clean mobile look */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-indigo-100 selection:text-indigo-800">
+
+  <!-- Toast Notification Container (replaces alert/confirm) -->
+  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- Top Navigation & Progress Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3">
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center text-white font-extrabold text-lg shadow-sm">
+            IF
+          </div>
+          <div>
+            <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">First Conditional Lab</h1>
+            <p class="text-xs text-slate-500 font-medium">A2 English Self-Learning Module</p>
+          </div>
+        </div>
+
+        <!-- Logged-in Student Pill -->
+        <div id="header-student-badge" class="hidden items-center gap-2 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-full">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span id="header-student-name" class="text-xs sm:text-sm font-semibold text-indigo-900 truncate max-w-[140px] sm:max-w-[200px]"></span>
+        </div>
+      </div>
+
+      <!-- Stepper Progress Bar -->
+      <nav id="stepper-nav" class="mt-3 pt-2 border-t border-slate-100 hidden" aria-label="Learning Progress">
+        <div class="flex items-center justify-between gap-1.5 overflow-x-auto no-scrollbar pb-1" id="stepper-items">
+          <!-- Populated dynamically by JS -->
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+    <!-- ========================================== -->
+    <!-- STEP 0: STUDENT SIGN IN                    -->
+    <!-- ========================================== -->
+    <section id="step-0" class="step-section animate-fade-in">
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden max-w-xl mx-auto">
+        <div class="bg-gradient-to-r from-indigo-600 via-indigo-600 to-violet-600 px-6 sm:px-8 py-8 text-white">
+          <span class="inline-block bg-white/20 backdrop-blur-sm text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full mb-3">
+            Level A2 • Grammar Practice
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Welcome! Let's learn the First Conditional</h2>
+          <p class="mt-2 text-indigo-100 text-sm sm:text-base">
+            Sign in below so we can put your name on your final JPG learning report at the end of the lesson.
+          </p>
+        </div>
+
+        <form id="signin-form" class="p-6 sm:p-8 space-y-5" novalidate>
+          <div>
+            <label for="student-name" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              Full Name <span class="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="student-name"
+              placeholder="e.g., Sofia Martinez"
+              required
+              class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition text-slate-900 placeholder:text-slate-400"
+            />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="student-group" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                Class / Group <span class="text-slate-400 font-normal">(optional)</span>
+              </label>
+              <input
+                type="text"
+                id="student-group"
+                placeholder="e.g., A2 - Morning"
+                class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition text-slate-900 placeholder:text-slate-400"
+              />
+            </div>
+            <div>
+              <label for="student-id" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                Student ID / Email <span class="text-slate-400 font-normal">(optional)</span>
+              </label>
+              <input
+                type="text"
+                id="student-id"
+                placeholder="e.g., 2026-014"
+                class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition text-slate-900 placeholder:text-slate-400"
+              />
+            </div>
+          </div>
+
+          <!-- Roadmap preview -->
+          <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80">
+            <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2.5">Your Learning Journey:</p>
+            <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm text-slate-700 font-medium">
+              <li class="flex items-center gap-2"><span class="text-indigo-600 font-bold">1.</span> Analyze the Structure</li>
+              <li class="flex items-center gap-2"><span class="text-indigo-600 font-bold">2.</span> Comprehension Check</li>
+              <li class="flex items-center gap-2"><span class="text-indigo-600 font-bold">3.</span> Order 10 Sentences</li>
+              <li class="flex items-center gap-2"><span class="text-indigo-600 font-bold">4.</span> Match 10 Sentence Halves</li>
+              <li class="flex items-center gap-2"><span class="text-indigo-600 font-bold">5.</span> Write 10 Personal Sentences</li>
+              <li class="flex items-center gap-2"><span class="text-indigo-600 font-bold">6.</span> Download JPG Report</li>
+            </ul>
+          </div>
+
+          <button
+            type="submit"
+            class="w-full py-3.5 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white font-bold text-base shadow-md shadow-indigo-200 transition flex items-center justify-center gap-2"
+          >
+            <span>Start Learning</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- STEP 1: ANALYZE HOW TO STRUCTURE IDEAS     -->
+    <!-- ========================================== -->
+    <section id="step-1" class="step-section hidden animate-fade-in space-y-6">
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 sm:p-8">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <span class="px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wide">
+            Part 1 • Discover & Analyze
+          </span>
+          <span class="text-xs font-medium text-slate-500">Read carefully & click the examples</span>
+        </div>
+
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">How do we structure the First Conditional?</h2>
+        <p class="mt-2 text-slate-600 text-sm sm:text-base leading-relaxed">
+          We use the <strong>First Conditional</strong> to talk about <strong>real and possible situations in the future</strong>. Every First Conditional sentence connects <strong>two ideas</strong>: a <span class="text-blue-700 font-semibold">Condition (the cause)</span> and a <span class="text-emerald-700 font-semibold">Result (what happens next)</span>.
+        </p>
+
+        <!-- Formula Breakdown Cards -->
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="rounded-2xl bg-blue-50 border-2 border-blue-200 p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="px-2.5 py-0.5 rounded-lg bg-blue-600 text-white text-xs font-bold">PART A</span>
+              <h3 class="font-bold text-blue-900">The Condition (IF-Clause)</h3>
+            </div>
+            <p class="text-sm text-blue-800 mb-3">Shows the possible future action or situation.</p>
+            <div class="bg-white rounded-xl px-4 py-3 border border-blue-200 font-bold text-blue-700 text-center text-sm sm:text-base">
+              If + Subject + <span class="underline decoration-2 decoration-blue-400">Present Simple</span>
+            </div>
+            <p class="mt-2.5 text-xs text-blue-700">
+              Example: <em>"If it <strong>rains</strong>..."</em> / <em>"If you <strong>don't study</strong>..."</em>
+            </p>
+          </div>
+
+          <div class="rounded-2xl bg-emerald-50 border-2 border-emerald-200 p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="px-2.5 py-0.5 rounded-lg bg-emerald-600 text-white text-xs font-bold">PART B</span>
+              <h3 class="font-bold text-emerald-900">The Result (Main Clause)</h3>
+            </div>
+            <p class="text-sm text-emerald-800 mb-3">Shows the future consequence of that condition.</p>
+            <div class="bg-white rounded-xl px-4 py-3 border border-emerald-200 font-bold text-emerald-700 text-center text-sm sm:text-base">
+              Subject + <span class="underline decoration-2 decoration-emerald-400">will / won't</span> + Base Verb
+            </div>
+            <p class="mt-2.5 text-xs text-emerald-700">
+              Example: <em>"...I <strong>will stay</strong> home."</em> / <em>"...you <strong>won't pass</strong>."</em>
+            </p>
+          </div>
+        </div>
+
+        <!-- Interactive Sentence Analyzer -->
+        <div class="mt-8">
+          <h3 class="text-lg font-bold text-slate-900 mb-1">Interactive Analysis: Click an example to inspect it!</h3>
+          <p class="text-sm text-slate-500 mb-4">Notice the <strong>verb tenses</strong> and where the <strong>comma ( , )</strong> goes.</p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="analysis-buttons">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Inspection Box -->
+          <div id="analysis-inspector" class="mt-4 rounded-2xl bg-slate-900 text-white p-5 sm:p-6 transition-all">
+            <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">Sentence Structure Breakdown</div>
+            <div id="inspector-sentence" class="text-lg sm:text-xl font-bold flex flex-wrap items-center gap-2 leading-relaxed"></div>
+            <div id="inspector-notes" class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs sm:text-sm"></div>
+          </div>
+        </div>
+
+        <!-- Golden Rules Box -->
+        <div class="mt-6 rounded-2xl bg-amber-50 border border-amber-200 p-5">
+          <h3 class="font-bold text-amber-900 flex items-center gap-2 text-base">
+            <span>💡</span> 3 Golden Rules to Remember
+          </h3>
+          <ul class="mt-2.5 space-y-2 text-sm text-amber-900/90">
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-amber-600">1.</span>
+              <span><strong>Never put "will" after "if"!</strong> Say <em>"If it rains"</em> (NOT <span class="line-through text-rose-600">If it will rain</span>).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-amber-600">2.</span>
+              <span><strong>Use a comma ( , )</strong> when the <em>If-clause</em> comes <strong>first</strong>: <em>"If I study<strong>,</strong> I will pass."</em></span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-amber-600">3.</span>
+              <span><strong>No comma</strong> when the <em>Result</em> comes <strong>first</strong>: <em>"I will pass if I study."</em></span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="mt-8 flex justify-end">
+          <button
+            onclick="goToStep(2)"
+            class="w-full sm:w-auto py-3.5 px-7 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md shadow-indigo-200 transition flex items-center justify-center gap-2"
+          >
+            <span>I Understand — Go to Comprehension Check</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- STEP 2: COMPREHENSION CHECK (5 QUESTIONS)  -->
+    <!-- ========================================== -->
+    <section id="step-2" class="step-section hidden animate-fade-in space-y-6">
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 sm:p-8">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <span class="px-3 py-1 rounded-full bg-violet-100 text-violet-700 text-xs font-bold uppercase tracking-wide">
+            Part 2 • Comprehension Check
+          </span>
+          <span id="comp-score-pill" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-600">
+            5 Questions
+          </span>
+        </div>
+
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Check Your Understanding</h2>
+        <p class="mt-1.5 text-slate-600 text-sm sm:text-base">
+          Choose the best answer for each question before you start practicing sentences.
+        </p>
+
+        <div id="comprehension-list" class="mt-6 space-y-5">
+          <!-- Populated by JS -->
+        </div>
+
+        <div id="comp-feedback-banner" class="hidden mt-6 p-4 rounded-2xl border font-medium text-sm sm:text-base"></div>
+
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <button
+            onclick="goToStep(1)"
+            class="w-full sm:w-auto py-3 px-5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold transition"
+          >
+            ← Review Structure
+          </button>
+
+          <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <button
+              id="btn-check-comp"
+              onclick="checkComprehension()"
+              class="w-full sm:w-auto py-3.5 px-7 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold shadow-md shadow-violet-200 transition"
+            >
+              Check My Answers
+            </button>
+            <button
+              id="btn-next-from-comp"
+              onclick="goToStep(3)"
+              class="hidden w-full sm:w-auto py-3.5 px-7 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md shadow-indigo-200 transition flex items-center justify-center gap-2"
+            >
+              <span>Next: Order 10 Sentences</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- STEP 3: ORDERING SENTENCES (10 ITEMS)      -->
+    <!-- ========================================== -->
+    <section id="step-3" class="step-section hidden animate-fade-in space-y-6">
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 sm:p-8">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wide">
+            Part 3 • Sentence Ordering (10 Exercises)
+          </span>
+          <span id="order-score-pill" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-600">
+            0 / 10 Checked
+          </span>
+        </div>
+
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Put the Words in the Correct Order</h2>
+        <p class="mt-1.5 text-slate-600 text-sm sm:text-base">
+          Tap the words below to build each First Conditional sentence. Tap a placed word to remove it. Remember: <strong>Capital letter first</strong>, and watch for the <strong>comma</strong>!
+        </p>
+
+        <div id="ordering-list" class="mt-6 space-y-6">
+          <!-- Populated by JS -->
+        </div>
+
+        <div id="order-feedback-banner" class="hidden mt-6 p-4 rounded-2xl border font-medium text-sm sm:text-base"></div>
+
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <button
+            onclick="goToStep(2)"
+            class="w-full sm:w-auto py-3 px-5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold transition"
+          >
+            ← Back
+          </button>
+
+          <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <button
+              id="btn-check-ordering"
+              onclick="checkAllOrdering()"
+              class="w-full sm:w-auto py-3.5 px-7 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-md shadow-blue-200 transition"
+            >
+              Check All 10 Sentences
+            </button>
+            <button
+              id="btn-next-from-order"
+              onclick="goToStep(4)"
+              class="hidden w-full sm:w-auto py-3.5 px-7 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md shadow-indigo-200 transition flex items-center justify-center gap-2"
+            >
+              <span>Next: Match 10 Halves</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- STEP 4: MATCHING SENTENCE HALVES (10)      -->
+    <!-- ========================================== -->
+    <section id="step-4" class="step-section hidden animate-fade-in space-y-6">
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 sm:p-8">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-wide">
+            Part 4 • Match Sentence Halves (10 Pairs)
+          </span>
+          <span id="match-score-pill" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-600">
+            0 / 10 Paired
+          </span>
+        </div>
+
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Match the Condition with the Result</h2>
+        <p class="mt-1.5 text-slate-600 text-sm sm:text-base">
+          <strong>How to play:</strong> Click one <span class="text-blue-700 font-semibold">Condition (1–10)</span> on the left, then click its matching <span class="text-emerald-700 font-semibold">Result (A–J)</span> on the right. Click a paired item again to unpair it.
+        </p>
+
+        <!-- Active Selection Helper Bar -->
+        <div id="match-helper-bar" class="mt-4 px-4 py-3 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-800 text-sm font-medium flex items-center justify-between gap-2">
+          <span id="match-helper-text">Step 1: Select a Condition (1–10) on the left.</span>
+          <button type="button" onclick="resetMatches()" id="btn-reset-matches" class="text-xs font-bold text-indigo-700 hover:underline shrink-0">
+            Clear All
+          </button>
+        </div>
+
+        <!-- Two Columns for Matching -->
+        <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          <!-- Left Column: Conditions -->
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-blue-700 mb-2.5 px-1">Conditions (If-Clauses)</h3>
+            <div id="match-left-col" class="space-y-2.5">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Right Column: Results -->
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2.5 px-1">Results (Main Clauses)</h3>
+            <div id="match-right-col" class="space-y-2.5">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <div id="match-feedback-banner" class="hidden mt-6 p-4 rounded-2xl border font-medium text-sm sm:text-base"></div>
+
+        <!-- Correction Review Table (shown if any wrong after check) -->
+        <div id="match-corrections" class="hidden mt-4 rounded-2xl bg-slate-50 border border-slate-200 p-4 space-y-2">
+          <h4 class="text-sm font-bold text-slate-800">Correct Pairs Review:</h4>
+          <ul id="match-corrections-list" class="text-sm space-y-1.5 text-slate-700"></ul>
+        </div>
+
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <button
+            onclick="goToStep(3)"
+            class="w-full sm:w-auto py-3 px-5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold transition"
+          >
+            ← Back
+          </button>
+
+          <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <button
+              id="btn-check-matching"
+              onclick="checkMatching()"
+              class="w-full sm:w-auto py-3.5 px-7 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-md shadow-emerald-200 transition"
+            >
+              Check All 10 Matches
+            </button>
+            <button
+              id="btn-next-from-match"
+              onclick="goToStep(5)"
+              class="hidden w-full sm:w-auto py-3.5 px-7 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md shadow-indigo-200 transition flex items-center justify-center gap-2"
+            >
+              <span>Next: Write About Your Life</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- STEP 5: WRITE SENTENCES ABOUT YOUR LIFE    -->
+    <!-- ========================================== -->
+    <section id="step-5" class="step-section hidden animate-fade-in space-y-6">
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 sm:p-8">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold uppercase tracking-wide">
+            Part 5 • Personal Production (10 Sentences)
+          </span>
+          <span id="write-progress-pill" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-600">
+            0 / 10 Completed
+          </span>
+        </div>
+
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Write About Your Own Life!</h2>
+        <p class="mt-1.5 text-slate-600 text-sm sm:text-base">
+          Complete the 10 sentences below with true ideas about your life, plans, family, or school. These sentences will appear on your final JPG report!
+        </p>
+
+        <!-- Helpful Reminder Pill Bar -->
+        <div class="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap gap-3 text-xs sm:text-sm">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+            <span><strong>Prompts 1–5:</strong> Finish with <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-bold">will / won't + verb</code></span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <span><strong>Prompts 6–9:</strong> Finish with <code class="bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-bold">Present Simple</code> (no "will"!)</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-violet-500"></span>
+            <span><strong>Prompt 10:</strong> Write a full sentence on your own!</span>
+          </div>
+        </div>
+
+        <div id="writing-list" class="mt-6 space-y-4">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <button
+            onclick="goToStep(4)"
+            class="w-full sm:w-auto py-3 px-5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold transition"
+          >
+            ← Back
+          </button>
+
+          <button
+            onclick="submitWritingAndFinish()"
+            class="w-full sm:w-auto py-3.5 px-8 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold shadow-md shadow-indigo-200 transition flex items-center justify-center gap-2"
+          >
+            <span>Finish & Generate My Report</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- STEP 6: FINAL REPORT & JPG DOWNLOAD        -->
+    <!-- ========================================== -->
+    <section id="step-6" class="step-section hidden animate-fade-in space-y-6">
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+        <!-- Report Banner -->
+        <div class="bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 px-6 sm:px-8 py-8 text-white">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <span class="inline-block bg-white/20 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-2">
+                Completion Certificate & Summary
+              </span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold">Great job, <span id="report-name-hero">Student</span>!</h2>
+              <p class="text-indigo-100 text-sm mt-1" id="report-meta-hero"></p>
+            </div>
+            <div class="bg-white/15 backdrop-blur-md border border-white/25 rounded-2xl px-5 py-3 text-center shrink-0">
+              <div class="text-xs uppercase tracking-wider text-indigo-100 font-semibold">Overall Score</div>
+              <div id="report-total-pct" class="text-3xl sm:text-4xl font-extrabold mt-0.5">0%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 sm:p-8 space-y-6">
+          <!-- Download CTA -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+            <div>
+              <h3 class="font-bold text-emerald-900 text-base sm:text-lg">Your JPG Report is Ready!</h3>
+              <p class="text-emerald-800 text-xs sm:text-sm mt-0.5">
+                Download your high-resolution JPG image report to submit to your teacher or save for your portfolio.
+              </p>
+            </div>
+            <button
+              onclick="downloadReportJPG()"
+              class="w-full sm:w-auto shrink-0 py-3.5 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold shadow-md shadow-emerald-200 transition flex items-center justify-center gap-2"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              <span>Download Report (.JPG)</span>
+            </button>
+          </div>
+
+          <!-- Score Breakdown Grid -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4 text-center">
+              <div class="text-xs font-bold uppercase text-slate-500">Comprehension</div>
+              <div id="rep-score-comp" class="text-2xl font-extrabold text-violet-700 mt-1">0 / 5</div>
+            </div>
+            <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4 text-center">
+              <div class="text-xs font-bold uppercase text-slate-500">Sentence Order</div>
+              <div id="rep-score-order" class="text-2xl font-extrabold text-blue-700 mt-1">0 / 10</div>
+            </div>
+            <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4 text-center">
+              <div class="text-xs font-bold uppercase text-slate-500">Matching Halves</div>
+              <div id="rep-score-match" class="text-2xl font-extrabold text-emerald-700 mt-1">0 / 10</div>
+            </div>
+            <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4 text-center">
+              <div class="text-xs font-bold uppercase text-slate-500">My Life Writing</div>
+              <div id="rep-score-write" class="text-2xl font-extrabold text-amber-600 mt-1">10 / 10</div>
+            </div>
+          </div>
+
+          <!-- Written Sentences Summary -->
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 mb-3">Your 10 First Conditional Sentences</h3>
+            <ol id="report-sentences-list" class="space-y-2 text-sm sm:text-base text-slate-700 bg-slate-50 rounded-2xl border border-slate-200 p-4 sm:p-5">
+              <!-- Populated by JS -->
+            </ol>
+          </div>
+
+          <!-- Footer Actions -->
+          <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-100">
+            <button
+              onclick="goToStep(5)"
+              class="w-full sm:w-auto py-3 px-5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold transition"
+            >
+              ← Edit My Sentences
+            </button>
+            <button
+              onclick="restartLab()"
+              class="w-full sm:w-auto py-3 px-5 rounded-xl text-rose-600 hover:bg-rose-50 font-semibold transition"
+            >
+              Start a New Session
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hidden Canvas for Generating High-Res JPG Report -->
+      <canvas id="report-canvas" class="hidden"></canvas>
+    </section>
+
+  </main>
+
+  <!-- Subtle Footer -->
+  <footer class="py-5 text-center text-xs text-slate-400">
+    First Conditional A2 Self-Learning Lab • Practice, Produce & Export
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- APPLICATION LOGIC (JAVASCRIPT)             -->
+  <!-- ========================================== -->
+  <script>
+    /*************************************************************************
+     * 1. CURRICULUM DATA (A2 FIRST CONDITIONAL)
+     *************************************************************************/
+
+    // Part 1: Interactive Analysis Examples
+    const ANALYSIS_EXAMPLES = [
+      {
+        id: 0,
+        label: 'Example 1: Weather (If first)',
+        parts: [
+          { text: 'If it rains tomorrow,', type: 'condition' },
+          { text: 'I will stay at home.', type: 'result' },
+        ],
+        conditionNote: '"rains" = Present Simple (with -s for it)',
+        resultNote: '"will stay" = will + base verb',
+        commaNote: 'Comma ( , ) IS needed because "If" is first.',
+      },
+      {
+        id: 1,
+        label: 'Example 2: Study (If first)',
+        parts: [
+          { text: 'If you study hard,', type: 'condition' },
+          { text: 'you will pass the exam.', type: 'result' },
+        ],
+        conditionNote: '"study" = Present Simple',
+        resultNote: '"will pass" = will + base verb',
+        commaNote: 'Comma ( , ) IS needed because "If" is first.',
+      },
+      {
+        id: 2,
+        label: 'Example 3: Result First (No comma!)',
+        parts: [
+          { text: 'She will be late', type: 'result' },
+          { text: "if she doesn't hurry.", type: 'condition' },
+        ],
+        conditionNote: '"doesn\'t hurry" = Negative Present Simple',
+        resultNote: '"will be" = will + base verb',
+        commaNote: 'NO comma because "if" is in the middle!',
+      },
+      {
+        id: 3,
+        label: 'Example 4: Negative Result (won\'t)',
+        parts: [
+          { text: "If we don't leave now,", type: 'condition' },
+          { text: "we won't catch the bus.", type: 'result' },
+        ],
+        conditionNote: '"don\'t leave" = Negative Present Simple',
+        resultNote: '"won\'t catch" = will not + base verb',
+        commaNote: 'Comma ( , ) IS needed because "If" is first.',
+      },
+    ];
+
+    // Part 2: Comprehension Check Questions (5 Questions)
+    const COMPREHENSION_QUESTIONS = [
+      {
+        id: 0,
+        question: '1. When do we use the First Conditional?',
+        options: [
+          'To talk about impossible dreams in the past.',
+          'To talk about real and possible situations in the future.',
+          'To describe daily routines that happen every morning.',
+        ],
+        correct: 1,
+        explanation: 'Correct! The First Conditional describes real, possible future situations and their results.',
+      },
+      {
+        id: 1,
+        question: '2. Which verb tense do we use right after "IF"?',
+        options: [
+          'Present Simple (e.g., If it rains...)',
+          'Future with "will" (e.g., If it will rain...)',
+          'Past Simple (e.g., If it rained...)',
+        ],
+        correct: 0,
+        explanation: 'Yes! Never use "will" in the if-clause. Always use Present Simple after "if".',
+      },
+      {
+        id: 2,
+        question: '3. Choose the grammatically CORRECT sentence:',
+        options: [
+          'If I will have time, I call you.',
+          'If I have time, I will call you.',
+          'If I had time, I will call you.',
+        ],
+        correct: 1,
+        explanation: 'Spot on! "If + Present Simple (have), will + base verb (will call)".',
+      },
+      {
+        id: 3,
+        question: '4. When do you need a comma ( , ) in a First Conditional sentence?',
+        options: [
+          'When the "If-clause" comes FIRST.',
+          'When the "If-clause" comes in the MIDDLE.',
+          'You never use a comma.',
+        ],
+        correct: 0,
+        explanation: 'Right! Use a comma when "If" starts the sentence. No comma when "if" is in the middle.',
+      },
+      {
+        id: 4,
+        question: '5. What is the short negative form of "will not"?',
+        options: ["willn't", "don't will", "won't"],
+        correct: 2,
+        explanation: 'Great! "will not" becomes "won\'t" (e.g., "I won\'t go out if it rains.").',
+      },
+    ];
+
+    // Part 3: 10 Sentence Ordering Exercises
+    const ORDERING_SENTENCES = [
+      { id: 0, words: ['If', 'it', 'rains', 'tomorrow,', 'I', 'will', 'stay', 'home.'] },
+      { id: 1, words: ['If', 'you', 'study', 'hard,', 'you', 'will', 'pass', 'the', 'test.'] },
+      { id: 2, words: ['She', 'will', 'be', 'tired', 'if', 'she', 'sleeps', 'late.'] },
+      { id: 3, words: ['If', 'we', 'hurry,', 'we', 'will', 'catch', 'the', 'bus.'] },
+      { id: 4, words: ['He', "won't", 'go', 'out', 'if', 'he', 'feels', 'sick.'] },
+      { id: 5, words: ['If', 'I', 'have', 'time,', 'I', 'will', 'call', 'you.'] },
+      { id: 6, words: ['They', 'will', 'buy', 'a', 'car', 'if', 'they', 'save', 'money.'] },
+      { id: 7, words: ['If', 'you', "don't", 'eat,', 'you', 'will', 'be', 'hungry.'] },
+      { id: 8, words: ['We', 'will', 'go', 'to', 'the', 'beach', 'if', 'it', 'is', 'sunny.'] },
+      { id: 9, words: ['If', 'she', 'invites', 'me,', 'I', 'will', 'go', 'to', 'her', 'party.'] },
+    ];
+
+    // Part 4: 10 Matching Sentence Halves
+    const MATCHING_PAIRS = [
+      { id: 0, left: 'If I feel hungry,', right: 'I will make a sandwich.' },
+      { id: 1, left: 'If it is very cold tonight,', right: 'we will wear warm jackets.' },
+      { id: 2, left: "If you don't water the plants,", right: 'they will die.' },
+      { id: 3, left: 'If my phone battery dies,', right: "I won't be able to text you." },
+      { id: 4, left: 'If she practices English every day,', right: 'she will speak very well.' },
+      { id: 5, left: 'If we miss the train,', right: 'we will take a taxi.' },
+      { id: 6, left: 'If he eats too much candy,', right: 'he will get a stomachache.' },
+      { id: 7, left: 'If I win the game,', right: 'I will celebrate with my friends.' },
+      { id: 8, left: 'If they arrive early,', right: 'they will get good seats.' },
+      { id: 9, left: 'If you forget your umbrella,', right: 'you will get wet in the rain.' },
+    ];
+
+    // Part 5: 10 Personal Life Writing Prompts
+    const WRITING_PROMPTS = [
+      { id: 0, prefix: 'If it rains this weekend,', type: 'result', placeholder: 'e.g., I will watch a movie at home.' },
+      { id: 1, prefix: 'If I have free time tonight,', type: 'result', placeholder: 'e.g., I will play video games.' },
+      { id: 2, prefix: 'If I save enough money this year,', type: 'result', placeholder: 'e.g., I will buy new sneakers.' },
+      { id: 3, prefix: 'If my best friend calls me later,', type: 'result', placeholder: 'e.g., we will talk for an hour.' },
+      { id: 4, prefix: 'If I wake up late tomorrow,', type: 'result', placeholder: "e.g., I won't have time for breakfast." },
+      { id: 5, prefix: 'I will be very happy if', type: 'condition', placeholder: 'e.g., I pass my English class.' },
+      { id: 6, prefix: 'My teacher will be proud if', type: 'condition', placeholder: 'e.g., I finish all my homework.' },
+      { id: 7, prefix: "I won't go out tonight if", type: 'condition', placeholder: 'e.g., I feel too tired.' },
+      { id: 8, prefix: 'I will celebrate with my family if', type: 'condition', placeholder: 'e.g., I get good grades.' },
+      { id: 9, prefix: '', type: 'full', label: 'Write your own complete First Conditional sentence about your future:', placeholder: 'e.g., If I travel next summer, I will visit the beach.' },
+    ];
+
+    // Distinct badge colors for matching pairs (1-10)
+    const PAIR_COLORS = [
+      'bg-indigo-600 text-white',
+      'bg-emerald-600 text-white',
+      'bg-amber-500 text-white',
+      'bg-rose-600 text-white',
+      'bg-sky-600 text-white',
+      'bg-purple-600 text-white',
+      'bg-teal-600 text-white',
+      'bg-orange-500 text-white',
+      'bg-pink-600 text-white',
+      'bg-slate-700 text-white',
+    ];
+
+    /*************************************************************************
+     * 2. APPLICATION STATE
+     *************************************************************************/
+    const state = {
+      currentStep: 0,
+      maxStepReached: 0,
+      student: {
+        name: '',
+        group: '',
+        id: '',
+        dateStr: '',
+      },
+      // Comprehension state
+      compAnswers: Array(COMPREHENSION_QUESTIONS.length).fill(null),
+      compChecked: false,
+      compScore: 0,
+      // Ordering state: each item stores shuffled bank indices & chosen indices
+      orderData: [],
+      orderChecked: false,
+      orderScore: 0,
+      // Matching state
+      matchRightShuffled: [], // array of { origId, text, letter }
+      selectedLeftId: null,
+      matches: {}, // { leftId: rightOrigId }
+      matchChecked: false,
+      matchScore: 0,
+      // Writing state
+      writingAnswers: Array(WRITING_PROMPTS.length).fill(''),
+    };
+
+    const STEP_LABELS = [
+      { step: 1, title: '1. Analyze' },
+      { step: 2, title: '2. Check' },
+      { step: 3, title: '3. Order (10)' },
+      { step: 4, title: '4. Match (10)' },
+      { step: 5, title: '5. My Life (10)' },
+      { step: 6, title: '6. JPG Report' },
+    ];
+
+    /*************************************************************************
+     * 3. UTILITY FUNCTIONS
+     *************************************************************************/
+
+    /** Fisher-Yates shuffle returning a new array (guarantees order != original when length > 1) */
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      // If accidentally identical to original and > 1 element, swap first two
+      if (copy.length > 1 && copy.every((val, idx) => val === arr[idx])) {
+        [copy[0], copy[1]] = [copy[1], copy[0]];
+      }
+      return copy;
+    }
+
+    /** Custom non-blocking toast notification (never uses alert/confirm) */
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const styles = {
+        info: 'bg-slate-900 text-white border-slate-700',
+        success: 'bg-emerald-600 text-white border-emerald-500',
+        warning: 'bg-amber-500 text-white border-amber-400',
+        error: 'bg-rose-600 text-white border-rose-500',
+      };
+      toast.className = `pointer-events-auto px-4 py-3 rounded-xl shadow-lg border text-sm font-semibold animate-fade-in flex items-center justify-between gap-3 ${styles[type] || styles.info}`;
+      toast.innerHTML = `<span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    /** Escape HTML to prevent XSS in student inputs */
+    function escapeHTML(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    /*************************************************************************
+     * 4. NAVIGATION & STEPPER
+     *************************************************************************/
+    function goToStep(stepNum) {
+      if (stepNum > 0 && !state.student.name) {
+        showToast('Please sign in first to start learning.', 'warning');
+        return;
+      }
+
+      state.currentStep = stepNum;
+      if (stepNum > state.maxStepReached) {
+        state.maxStepReached = stepNum;
+      }
+
+      // Toggle visible section
+      document.querySelectorAll('.step-section').forEach((sec) => sec.classList.add('hidden'));
+      const activeSec = document.getElementById(`step-${stepNum}`);
+      if (activeSec) {
+        activeSec.classList.remove('hidden');
+      }
+
+      // Show/hide stepper
+      const stepperNav = document.getElementById('stepper-nav');
+      if (stepNum > 0) {
+        stepperNav.classList.remove('hidden');
+        renderStepper();
+      } else {
+        stepperNav.classList.add('hidden');
+      }
+
+      if (stepNum === 6) {
+        renderReportView();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderStepper() {
+      const container = document.getElementById('stepper-items');
+      container.innerHTML = STEP_LABELS.map((item) => {
+        const isCurrent = state.currentStep === item.step;
+        const isUnlocked = item.step <= state.maxStepReached;
+        const isCompleted = item.step < state.maxStepReached;
+
+        let classes = 'px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition flex items-center gap-1.5 ';
+        if (isCurrent) {
+          classes += 'bg-indigo-600 text-white shadow-sm';
+        } else if (isCompleted) {
+          classes += 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 cursor-pointer border border-emerald-200';
+        } else if (isUnlocked) {
+          classes += 'bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer';
+        } else {
+          classes += 'bg-slate-50 text-slate-400 cursor-not-allowed';
+        }
+
+        const checkIcon = isCompleted && !isCurrent ? '✓ ' : '';
+        return `<button type="button" ${isUnlocked ? `onclick="goToStep(${item.step})"` : 'disabled'} class="${classes}">${checkIcon}${item.title}</button>`;
+      }).join('');
+    }
+
+    /*************************************************************************
+     * 5. STEP 0: SIGN-IN HANDLER
+     *************************************************************************/
+    document.getElementById('signin-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nameInput = document.getElementById('student-name').value.trim();
+      const groupInput = document.getElementById('student-group').value.trim();
+      const idInput = document.getElementById('student-id').value.trim();
+
+      if (nameInput.length < 2) {
+        showToast('Please enter your full name to continue.', 'error');
+        document.getElementById('student-name').focus();
+        return;
+      }
+
+      state.student.name = nameInput;
+      state.student.group = groupInput || 'A2 English';
+      state.student.id = idInput;
+      state.student.dateStr = new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+
+      // Update header badge
+      document.getElementById('header-student-name').textContent = state.student.name;
+      const badge = document.getElementById('header-student-badge');
+      badge.classList.remove('hidden');
+      badge.classList.add('flex');
+
+      showToast(`Welcome, ${state.student.name}! Let's begin.`, 'success');
+      goToStep(1);
+    });
+
+    /*************************************************************************
+     * 6. STEP 1: INTERACTIVE STRUCTURE ANALYSIS
+     *************************************************************************/
+    function initAnalysis() {
+      const btnContainer = document.getElementById('analysis-buttons');
+      btnContainer.innerHTML = ANALYSIS_EXAMPLES.map(
+        (ex, idx) => `
+        <button
+          type="button"
+          id="analysis-btn-${idx}"
+          onclick="selectAnalysisExample(${idx})"
+          class="text-left p-3.5 rounded-xl border-2 transition font-semibold text-sm flex items-center justify-between gap-2"
+        >
+          <span>${ex.label}</span>
+          <span class="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">Inspect</span>
+        </button>
+      `
+      ).join('');
+      selectAnalysisExample(0);
+    }
+
+    function selectAnalysisExample(idx) {
+      const ex = ANALYSIS_EXAMPLES[idx];
+      ANALYSIS_EXAMPLES.forEach((_, i) => {
+        const btn = document.getElementById(`analysis-btn-${i}`);
+        if (i === idx) {
+          btn.className = 'text-left p-3.5 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-indigo-900 transition font-semibold text-sm flex items-center justify-between gap-2 shadow-sm';
+        } else {
+          btn.className = 'text-left p-3.5 rounded-xl border-2 border-slate-200 bg-white text-slate-700 hover:border-indigo-300 transition font-semibold text-sm flex items-center justify-between gap-2';
+        }
+      });
+
+      const sentenceEl = document.getElementById('inspector-sentence');
+      sentenceEl.innerHTML = ex.parts
+        .map((p) => {
+          if (p.type === 'condition') {
+            return `<span class="px-3 py-1 rounded-lg bg-blue-500/25 border border-blue-400/50 text-blue-200">${p.text}</span>`;
+          }
+          return `<span class="px-3 py-1 rounded-lg bg-emerald-500/25 border border-emerald-400/50 text-emerald-200">${p.text}</span>`;
+        })
+        .join(' ');
+
+      document.getElementById('inspector-notes').innerHTML = `
+        <div class="bg-white/10 rounded-xl p-3 border border-white/10">
+          <div class="text-blue-300 font-bold text-xs uppercase mb-1">Condition (If-Clause)</div>
+          <div class="text-slate-100">${ex.conditionNote}</div>
+        </div>
+        <div class="bg-white/10 rounded-xl p-3 border border-white/10">
+          <div class="text-emerald-300 font-bold text-xs uppercase mb-1">Result (Main Clause)</div>
+          <div class="text-slate-100">${ex.resultNote}</div>
+        </div>
+        <div class="bg-white/10 rounded-xl p-3 border border-white/10">
+          <div class="text-amber-300 font-bold text-xs uppercase mb-1">Punctuation Rule</div>
+          <div class="text-slate-100">${ex.commaNote}</div>
+        </div>
+      `;
+    }
+
+    /*************************************************************************
+     * 7. STEP 2: COMPREHENSION CHECK
+     *************************************************************************/
+    function renderComprehension() {
+      const container = document.getElementById('comprehension-list');
+      container.innerHTML = COMPREHENSION_QUESTIONS.map((q, qIdx) => {
+        const chosen = state.compAnswers[qIdx];
+        return `
+          <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
+            <p class="font-bold text-slate-900 text-sm sm:text-base mb-3">${q.question}</p>
+            <div class="space-y-2">
+              ${q.options
+                .map((opt, oIdx) => {
+                  const isSelected = chosen === oIdx;
+                  let optStyle = 'bg-white border-slate-200 hover:border-violet-400 text-slate-700';
+                  if (state.compChecked) {
+                    if (oIdx === q.correct) {
+                      optStyle = 'bg-emerald-50 border-emerald-500 text-emerald-900 font-semibold';
+                    } else if (isSelected && oIdx !== q.correct) {
+                      optStyle = 'bg-rose-50 border-rose-400 text-rose-800';
+                    } else {
+                      optStyle = 'bg-white border-slate-200 text-slate-400';
+                    }
+                  } else if (isSelected) {
+                    optStyle = 'bg-violet-50 border-violet-600 text-violet-900 font-semibold ring-2 ring-violet-100';
+                  }
+
+                  return `
+                    <button
+                      type="button"
+                      ${state.compChecked ? 'disabled' : `onclick="selectCompAnswer(${qIdx}, ${oIdx})"`}
+                      class="w-full text-left px-4 py-3 rounded-xl border-2 transition text-sm sm:text-base flex items-center gap-3 ${optStyle}"
+                    >
+                      <span class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 text-xs font-bold ${
+                        isSelected ? 'border-violet-600 bg-violet-600 text-white' : 'border-slate-300'
+                      }">
+                        ${isSelected ? '•' : ''}
+                      </span>
+                      <span>${opt}</span>
+                    </button>
+                  `;
+                })
+                .join('')}
+            </div>
+            ${
+              state.compChecked
+                ? `<p class="mt-3 text-xs sm:text-sm font-medium px-3 py-2 rounded-lg ${
+                    chosen === q.correct ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'
+                  }">${chosen === q.correct ? '✓ ' : '💡 '}${q.explanation}</p>`
+                : ''
+            }
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectCompAnswer(qIdx, oIdx) {
+      if (state.compChecked) return;
+      state.compAnswers[qIdx] = oIdx;
+      renderComprehension();
+    }
+
+    function checkComprehension() {
+      if (state.compAnswers.some((a) => a === null)) {
+        showToast('Please answer all 5 questions first!', 'warning');
+        return;
+      }
+
+      let score = 0;
+      COMPREHENSION_QUESTIONS.forEach((q, idx) => {
+        if (state.compAnswers[idx] === q.correct) score++;
+      });
+
+      state.compChecked = true;
+      state.compScore = score;
+      renderComprehension();
+
+      const pill = document.getElementById('comp-score-pill');
+      pill.textContent = `Score: ${score} / 5`;
+      pill.className = 'text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800';
+
+      const banner = document.getElementById('comp-feedback-banner');
+      banner.classList.remove('hidden');
+      if (score >= 4) {
+        banner.className = 'mt-6 p-4 rounded-2xl border bg-emerald-50 border-emerald-200 text-emerald-900 font-semibold text-sm sm:text-base';
+        banner.textContent = `Awesome work! You scored ${score} out of 5. You're ready to practice building sentences!`;
+      } else {
+        banner.className = 'mt-6 p-4 rounded-2xl border bg-amber-50 border-amber-200 text-amber-900 font-semibold text-sm sm:text-base';
+        banner.textContent = `You scored ${score} out of 5. Read the explanations above carefully, then continue to practice!`;
+      }
+
+      document.getElementById('btn-check-comp').classList.add('hidden');
+      document.getElementById('btn-next-from-comp').classList.remove('hidden');
+    }
+
+    /*************************************************************************
+     * 8. STEP 3: ORDERING SENTENCES (10 EXERCISES)
+     *************************************************************************/
+    function initOrdering() {
+      state.orderData = ORDERING_SENTENCES.map((item) => {
+        // Create word objects with unique local IDs so duplicate words (e.g., "will", "the") work cleanly
+        const tokens = item.words.map((w, idx) => ({ id: idx, text: w }));
+        return {
+          correctSentence: item.words.join(' '),
+          bank: shuffleArray(tokens),
+          selected: [],
+          isCorrect: null,
+        };
+      });
+      renderOrdering();
+    }
+
+    function renderOrdering() {
+      const container = document.getElementById('ordering-list');
+      container.innerHTML = state.orderData
+        .map((item, sIdx) => {
+          let cardBorder = 'border-slate-200 bg-slate-50/60';
+          if (state.orderChecked) {
+            cardBorder = item.isCorrect ? 'border-emerald-300 bg-emerald-50/40' : 'border-rose-300 bg-rose-50/40';
+          }
+
+          return `
+          <div class="rounded-2xl border-2 p-4 sm:p-5 transition ${cardBorder}">
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Sentence ${sIdx + 1} of 10</span>
+              ${
+                !state.orderChecked
+                  ? `<button type="button" onclick="clearOrderSentence(${sIdx})" class="text-xs font-semibold text-slate-500 hover:text-indigo-600 transition">Reset</button>`
+                  : item.isCorrect
+                  ? `<span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">✓ Correct</span>`
+                  : `<span class="text-xs font-bold text-rose-700 bg-rose-100 px-2.5 py-0.5 rounded-full">✕ Check Answer</span>`
+              }
+            </div>
+
+            <!-- Answer Drop Zone -->
+            <div class="min-h-[54px] p-2.5 rounded-xl bg-white border-2 border-dashed ${
+              item.selected.length > 0 ? 'border-indigo-300' : 'border-slate-300'
+            } flex flex-wrap items-center gap-2">
+              ${
+                item.selected.length === 0
+                  ? `<span class="text-xs sm:text-sm text-slate-400 px-1">Tap words below in the correct order...</span>`
+                  : item.selected
+                      .map(
+                        (tok, pos) => `
+                    <button
+                      type="button"
+                      ${state.orderChecked ? 'disabled' : `onclick="removeOrderWord(${sIdx}, ${pos})"`}
+                      class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold text-sm shadow-sm hover:bg-indigo-700 transition active:scale-95"
+                    >
+                      ${escapeHTML(tok.text)}
+                    </button>
+                  `
+                      )
+                      .join('')
+              }
+            </div>
+
+            <!-- Word Bank -->
+            <div class="mt-3 flex flex-wrap gap-2">
+              ${item.bank
+                .map((tok, bIdx) => {
+                  const isUsed = item.selected.some((s) => s.id === tok.id);
+                  return `
+                    <button
+                      type="button"
+                      ${isUsed || state.orderChecked ? 'disabled' : `onclick="pickOrderWord(${sIdx}, ${bIdx})"`}
+                      class="px-3 py-1.5 rounded-lg border font-medium text-sm transition ${
+                        isUsed
+                          ? 'bg-slate-100 border-slate-200 text-slate-300 cursor-default'
+                          : 'bg-white border-slate-300 text-slate-800 hover:border-indigo-500 hover:bg-indigo-50 shadow-sm active:scale-95'
+                      }"
+                    >
+                      ${escapeHTML(tok.text)}
+                    </button>
+                  `;
+                })
+                .join('')}
+            </div>
+
+            ${
+              state.orderChecked && !item.isCorrect
+                ? `<div class="mt-3 text-xs sm:text-sm text-emerald-800 bg-emerald-100/80 px-3 py-2 rounded-lg font-medium">
+                    <strong>Correct order:</strong> ${escapeHTML(item.correctSentence)}
+                  </div>`
+                : ''
+            }
+          </div>
+        `;
+        })
+        .join('');
+    }
+
+    function pickOrderWord(sIdx, bIdx) {
+      if (state.orderChecked) return;
+      const item = state.orderData[sIdx];
+      const tok = item.bank[bIdx];
+      if (!item.selected.some((s) => s.id === tok.id)) {
+        item.selected.push(tok);
+        renderOrdering();
+      }
+    }
+
+    function removeOrderWord(sIdx, pos) {
+      if (state.orderChecked) return;
+      state.orderData[sIdx].selected.splice(pos, 1);
+      renderOrdering();
+    }
+
+    function clearOrderSentence(sIdx) {
+      if (state.orderChecked) return;
+      state.orderData[sIdx].selected = [];
+      renderOrdering();
+    }
+
+    function checkAllOrdering() {
+      const incomplete = state.orderData.findIndex((item) => item.selected.length !== item.bank.length);
+      if (incomplete !== -1) {
+        showToast(`Please complete Sentence ${incomplete + 1} (use all words) before checking!`, 'warning');
+        return;
+      }
+
+      let score = 0;
+      state.orderData.forEach((item) => {
+        const built = item.selected.map((t) => t.text).join(' ');
+        item.isCorrect = built === item.correctSentence;
+        if (item.isCorrect) score++;
+      });
+
+      state.orderChecked = true;
+      state.orderScore = score;
+      renderOrdering();
+
+      const pill = document.getElementById('order-score-pill');
+      pill.textContent = `Score: ${score} / 10`;
+      pill.className = 'text-xs font-bold px-3 py-1 rounded-full bg-blue-100 text-blue-800';
+
+      const banner = document.getElementById('order-feedback-banner');
+      banner.classList.remove('hidden');
+      banner.className =
+        score >= 7
+          ? 'mt-6 p-4 rounded-2xl border bg-emerald-50 border-emerald-200 text-emerald-900 font-semibold text-sm sm:text-base'
+          : 'mt-6 p-4 rounded-2xl border bg-amber-50 border-amber-200 text-amber-900 font-semibold text-sm sm:text-base';
+      banner.textContent = `You ordered ${score} out of 10 sentences correctly! Review any corrections above, then move on to Matching.`;
+
+      document.getElementById('btn-check-ordering').classList.add('hidden');
+      document.getElementById('btn-next-from-order').classList.remove('hidden');
+    }
+
+    /*************************************************************************
+     * 9. STEP 4: MATCHING SENTENCE HALVES (10 PAIRS)
+     *************************************************************************/
+    function initMatching() {
+      const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+      const shuffled = shuffleArray(MATCHING_PAIRS);
+      state.matchRightShuffled = shuffled.map((p, idx) => ({
+        origId: p.id,
+        text: p.right,
+        letter: letters[idx],
+      }));
+      state.matches = {};
+      state.selectedLeftId = null;
+      state.matchChecked = false;
+      renderMatching();
+    }
+
+    function renderMatching() {
+      const leftCol = document.getElementById('match-left-col');
+      const rightCol = document.getElementById('match-right-col');
+
+      // Update pair counter
+      const pairedCount = Object.keys(state.matches).length;
+      const pill = document.getElementById('match-score-pill');
+      if (!state.matchChecked) {
+        pill.textContent = `${pairedCount} / 10 Paired`;
+      }
+
+      // Render Left Column (Conditions 1-10)
+      leftCol.innerHTML = MATCHING_PAIRS.map((item, idx) => {
+        const isSelected = state.selectedLeftId === item.id;
+        const matchedRightOrigId = state.matches[item.id];
+        const isPaired = matchedRightOrigId !== undefined;
+        const matchedRightObj = isPaired
+          ? state.matchRightShuffled.find((r) => r.origId === matchedRightOrigId)
+          : null;
+
+        let classes = 'w-full text-left p-3.5 rounded-xl border-2 transition text-sm flex items-center justify-between gap-2 ';
+        if (state.matchChecked) {
+          const correct = matchedRightOrigId === item.id;
+          classes += correct
+            ? 'bg-emerald-50 border-emerald-400 text-emerald-900 font-medium'
+            : 'bg-rose-50 border-rose-400 text-rose-900 font-medium';
+        } else if (isSelected) {
+          classes += 'bg-indigo-50 border-indigo-600 ring-2 ring-indigo-200 text-indigo-950 font-semibold';
+        } else if (isPaired) {
+          classes += 'bg-white border-slate-300 text-slate-800 hover:border-indigo-400';
+        } else {
+          classes += 'bg-white border-slate-200 text-slate-800 hover:border-blue-400 hover:bg-blue-50/40';
+        }
+
+        const badge = isPaired
+          ? `<span class="shrink-0 px-2 py-0.5 rounded-md text-xs font-bold ${PAIR_COLORS[idx]}">${idx + 1} → ${matchedRightObj.letter}</span>`
+          : `<span class="shrink-0 w-6 h-6 rounded-md bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center">${idx + 1}</span>`;
+
+        return `
+          <button type="button" ${state.matchChecked ? 'disabled' : `onclick="clickMatchLeft(${item.id})"`} class="${classes}">
+            <span>${escapeHTML(item.left)}</span>
+            ${badge}
+          </button>
+        `;
+      }).join('');
+
+      // Render Right Column (Results A-J)
+      rightCol.innerHTML = state.matchRightShuffled
+        .map((rItem) => {
+          // Find if any leftId is currently mapped to this right item
+          const pairedLeftEntry = Object.entries(state.matches).find(([, rId]) => rId === rItem.origId);
+          const pairedLeftId = pairedLeftEntry ? Number(pairedLeftEntry[0]) : null;
+          const isPaired = pairedLeftId !== null;
+
+          let classes = 'w-full text-left p-3.5 rounded-xl border-2 transition text-sm flex items-center justify-between gap-2 ';
+          if (state.matchChecked) {
+            const correct = pairedLeftId === rItem.origId;
+            classes += correct
+              ? 'bg-emerald-50 border-emerald-400 text-emerald-900 font-medium'
+              : 'bg-rose-50 border-rose-400 text-rose-900 font-medium';
+          } else if (state.selectedLeftId !== null) {
+            classes += isPaired
+              ? 'bg-slate-50 border-slate-300 text-slate-600 hover:border-emerald-500'
+              : 'bg-white border-emerald-300 text-slate-800 hover:bg-emerald-50 hover:border-emerald-500 shadow-sm';
+          } else {
+            classes += isPaired
+              ? 'bg-white border-slate-300 text-slate-800 hover:border-rose-300'
+              : 'bg-white border-slate-200 text-slate-700';
+          }
+
+          const badge = isPaired
+            ? `<span class="shrink-0 px-2 py-0.5 rounded-md text-xs font-bold ${PAIR_COLORS[pairedLeftId]}">${pairedLeftId + 1} → ${rItem.letter}</span>`
+            : `<span class="shrink-0 w-6 h-6 rounded-md bg-emerald-100 text-emerald-700 text-xs font-bold flex items-center justify-center">${rItem.letter}</span>`;
+
+          return `
+            <button type="button" ${state.matchChecked ? 'disabled' : `onclick="clickMatchRight(${rItem.origId})"`} class="${classes}">
+              <div class="flex items-center gap-2.5">
+                ${badge}
+                <span>${escapeHTML(rItem.text)}</span>
+              </div>
+            </button>
+          `;
+        })
+        .join('');
+
+      // Update helper instruction text
+      const helperText = document.getElementById('match-helper-text');
+      if (state.matchChecked) {
+        helperText.textContent = 'Matching complete! Review your results below.';
+      } else if (state.selectedLeftId !== null) {
+        helperText.textContent = `Step 2: Now click the matching Result (A–J) on the right for #${state.selectedLeftId + 1}.`;
+      } else {
+        helperText.textContent = 'Step 1: Click a Condition (1–10) on the left.';
+      }
+    }
+
+    function clickMatchLeft(leftId) {
+      if (state.matchChecked) return;
+      if (state.selectedLeftId === leftId) {
+        state.selectedLeftId = null;
+      } else {
+        state.selectedLeftId = leftId;
+      }
+      renderMatching();
+    }
+
+    function clickMatchRight(rightOrigId) {
+      if (state.matchChecked) return;
+
+      // If no left is selected, clicking an already paired right unpairs it
+      if (state.selectedLeftId === null) {
+        const existing = Object.entries(state.matches).find(([, rId]) => rId === rightOrigId);
+        if (existing) {
+          delete state.matches[existing[0]];
+          renderMatching();
+        } else {
+          showToast('First click a Condition (1–10) on the left!', 'info');
+        }
+        return;
+      }
+
+      // Remove any previous link using this right item
+      Object.keys(state.matches).forEach((k) => {
+        if (state.matches[k] === rightOrigId) {
+          delete state.matches[k];
+        }
+      });
+
+      // Pair selected left with clicked right
+      state.matches[state.selectedLeftId] = rightOrigId;
+      state.selectedLeftId = null;
+      renderMatching();
+    }
+
+    function resetMatches() {
+      if (state.matchChecked) return;
+      state.matches = {};
+      state.selectedLeftId = null;
+      renderMatching();
+    }
+
+    function checkMatching() {
+      if (Object.keys(state.matches).length < MATCHING_PAIRS.length) {
+        showToast('Please match all 10 sentence halves before checking!', 'warning');
+        return;
+      }
+
+      let score = 0;
+      const missed = [];
+      MATCHING_PAIRS.forEach((pair) => {
+        if (state.matches[pair.id] === pair.id) {
+          score++;
+        } else {
+          missed.push(pair);
+        }
+      });
+
+      state.matchChecked = true;
+      state.matchScore = score;
+      renderMatching();
+
+      const pill = document.getElementById('match-score-pill');
+      pill.textContent = `Score: ${score} / 10`;
+      pill.className = 'text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800';
+
+      document.getElementById('btn-reset-matches').classList.add('hidden');
+
+      const banner = document.getElementById('match-feedback-banner');
+      banner.classList.remove('hidden');
+      banner.className =
+        score >= 7
+          ? 'mt-6 p-4 rounded-2xl border bg-emerald-50 border-emerald-200 text-emerald-900 font-semibold text-sm sm:text-base'
+          : 'mt-6 p-4 rounded-2xl border bg-amber-50 border-amber-200 text-amber-900 font-semibold text-sm sm:text-base';
+      banner.textContent = `You matched ${score} out of 10 pairs correctly!`;
+
+      if (missed.length > 0) {
+        const corrBox = document.getElementById('match-corrections');
+        const corrList = document.getElementById('match-corrections-list');
+        corrBox.classList.remove('hidden');
+        corrList.innerHTML = missed
+          .map((m) => `<li><strong>#${m.id + 1}:</strong> ${escapeHTML(m.left)} <span class="text-emerald-700 font-semibold">${escapeHTML(m.right)}</span></li>`)
+          .join('');
+      }
+
+      document.getElementById('btn-check-matching').classList.add('hidden');
+      document.getElementById('btn-next-from-match').classList.remove('hidden');
+    }
+
+    /*************************************************************************
+     * 10. STEP 5: WRITE 10 SENTENCES ABOUT YOUR LIFE
+     *************************************************************************/
+    function renderWriting() {
+      const container = document.getElementById('writing-list');
+      container.innerHTML = WRITING_PROMPTS.map((p, idx) => {
+        const val = state.writingAnswers[idx] || '';
+        const badgeColor =
+          p.type === 'result'
+            ? 'bg-blue-100 text-blue-700'
+            : p.type === 'condition'
+            ? 'bg-emerald-100 text-emerald-700'
+            : 'bg-violet-100 text-violet-700';
+
+        return `
+          <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${badgeColor}">Sentence ${idx + 1}</span>
+              <span id="write-hint-${idx}" class="text-xs font-medium text-slate-400"></span>
+            </div>
+            ${
+              p.type === 'full'
+                ? `<label for="write-input-${idx}" class="block text-sm sm:text-base font-bold text-slate-800 mb-2">${p.label}</label>`
+                : `<label for="write-input-${idx}" class="block text-sm sm:text-base font-bold text-slate-800 mb-2">${p.prefix} <span class="text-indigo-500 font-normal">...</span></label>`
+            }
+            <input
+              type="text"
+              id="write-input-${idx}"
+              value="${escapeHTML(val)}"
+              oninput="handleWritingInput(${idx}, this.value)"
+              placeholder="${escapeHTML(p.placeholder)}"
+              class="w-full px-4 py-3 rounded-xl bg-white border border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition text-slate-900 text-sm sm:text-base"
+            />
+          </div>
+        `;
+      }).join('');
+      updateWritingProgress();
+    }
+
+    function handleWritingInput(idx, value) {
+      state.writingAnswers[idx] = value;
+      const hintEl = document.getElementById(`write-hint-${idx}`);
+      const trimmed = value.trim();
+      const prompt = WRITING_PROMPTS[idx];
+
+      if (!trimmed) {
+        hintEl.textContent = '';
+        hintEl.className = 'text-xs font-medium text-slate-400';
+      } else if (prompt.type === 'result') {
+        const hasFuture = /\b(will|won't|will not|can|might|may)\b|'ll\b/i.test(trimmed);
+        if (hasFuture) {
+          hintEl.textContent = '✓ Great First Conditional result!';
+          hintEl.className = 'text-xs font-semibold text-emerald-600';
+        } else {
+          hintEl.textContent = '💡 Tip: Try using "will" or "won\'t"';
+          hintEl.className = 'text-xs font-semibold text-amber-600';
+        }
+      } else if (prompt.type === 'condition') {
+        const hasWillInIf = /\b(will|won't)\b/i.test(trimmed);
+        if (hasWillInIf) {
+          hintEl.textContent = '💡 Remember: Use Present Simple after "if" (no "will")!';
+          hintEl.className = 'text-xs font-semibold text-amber-600';
+        } else {
+          hintEl.textContent = '✓ Looks good!';
+          hintEl.className = 'text-xs font-semibold text-emerald-600';
+        }
+      } else {
+        const hasIf = /\bif\b/i.test(trimmed);
+        const hasFuture = /\b(will|won't|can|might)\b|'ll\b/i.test(trimmed);
+        if (hasIf && hasFuture) {
+          hintEl.textContent = '✓ Awesome complete sentence!';
+          hintEl.className = 'text-xs font-semibold text-emerald-600';
+        } else {
+          hintEl.textContent = '💡 Include "If" + Present Simple and "will / won\'t"';
+          hintEl.className = 'text-xs font-semibold text-amber-600';
+        }
+      }
+
+      updateWritingProgress();
+    }
+
+    function updateWritingProgress() {
+      const doneCount = state.writingAnswers.filter((a) => a.trim().split(/\s+/).filter(Boolean).length >= 2).length;
+      const pill = document.getElementById('write-progress-pill');
+      pill.textContent = `${doneCount} / 10 Completed`;
+      if (doneCount === 10) {
+        pill.className = 'text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800';
+      } else {
+        pill.className = 'text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-600';
+      }
+    }
+
+    function getFullWrittenSentence(idx) {
+      const p = WRITING_PROMPTS[idx];
+      let userPart = (state.writingAnswers[idx] || '').trim();
+      if (!userPart) return '';
+      // Ensure punctuation at the end
+      if (!/[.!?]$/.test(userPart)) userPart += '.';
+      if (p.type === 'full') {
+        return userPart.charAt(0).toUpperCase() + userPart.slice(1);
+      }
+      return `${p.prefix} ${userPart}`;
+    }
+
+    function submitWritingAndFinish() {
+      for (let i = 0; i < WRITING_PROMPTS.length; i++) {
+        const words = (state.writingAnswers[i] || '').trim().split(/\s+/).filter(Boolean);
+        const minWords = WRITING_PROMPTS[i].type === 'full' ? 4 : 2;
+        if (words.length < minWords) {
+          showToast(`Please complete Sentence ${i + 1} with a full idea before finishing!`, 'warning');
+          const el = document.getElementById(`write-input-${i}`);
+          if (el) el.focus();
+          return;
+        }
+      }
+
+      showToast('All 10 sentences saved! Generating your report...', 'success');
+      goToStep(6);
+    }
+
+    /*************************************************************************
+     * 11. STEP 6: REPORT VIEW & HIGH-RES CANVAS JPG GENERATOR
+     *************************************************************************/
+    function calculateTotals() {
+      const earned = state.compScore + state.orderScore + state.matchScore + 10; // 10 pts for completing all 10 personal sentences
+      const possible = 5 + 10 + 10 + 10; // 35 total points
+      const pct = Math.round((earned / possible) * 100);
+      return { earned, possible, pct };
+    }
+
+    function renderReportView() {
+      const { pct } = calculateTotals();
+
+      document.getElementById('report-name-hero').textContent = state.student.name;
+      const metaParts = [state.student.group, state.student.id, state.student.dateStr].filter(Boolean);
+      document.getElementById('report-meta-hero').textContent = metaParts.join('  •  ');
+      document.getElementById('report-total-pct').textContent = `${pct}%`;
+
+      document.getElementById('rep-score-comp').textContent = `${state.compScore} / 5`;
+      document.getElementById('rep-score-order').textContent = `${state.orderScore} / 10`;
+      document.getElementById('rep-score-match').textContent = `${state.matchScore} / 10`;
+      document.getElementById('rep-score-write').textContent = `10 / 10`;
+
+      const listEl = document.getElementById('report-sentences-list');
+      listEl.innerHTML = WRITING_PROMPTS.map((_, idx) => {
+        const full = getFullWrittenSentence(idx);
+        return `<li class="flex items-start gap-2.5"><span class="font-bold text-indigo-600 shrink-0">${idx + 1}.</span><span>${escapeHTML(full)}</span></li>`;
+      }).join('');
+    }
+
+    /** Helper: wrap text onto multiple lines for HTML5 Canvas */
+    function getWrappedLines(ctx, text, maxWidth) {
+      const words = text.split(' ');
+      const lines = [];
+      let currentLine = '';
+
+      for (const word of words) {
+        const testLine = currentLine ? `${currentLine} ${word}` : word;
+        if (ctx.measureText(testLine).width > maxWidth && currentLine) {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          currentLine = testLine;
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+      return lines;
+    }
+
+    /** Helper: draw rounded rectangle on Canvas */
+    function drawRoundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    /**
+     * Generates a crisp, self-contained JPG learning report using HTML5 Canvas
+     * and triggers an automatic download.
+     */
+    function downloadReportJPG() {
+      try {
+        const canvas = document.getElementById('report-canvas');
+        const ctx = canvas.getContext('2d');
+        const width = 1200;
+        const padding = 60;
+        const contentWidth = width - padding * 2;
+        const { pct } = calculateTotals();
+
+        // Pre-measure wrapped personal sentences to calculate exact dynamic height
+        ctx.font = '500 22px Inter, Arial, sans-serif';
+        const sentenceBlocks = WRITING_PROMPTS.map((_, idx) => {
+          const fullText = `${idx + 1}. ${getFullWrittenSentence(idx)}`;
+          return getWrappedLines(ctx, fullText, contentWidth - 60);
+        });
+
+        const totalSentenceLines = sentenceBlocks.reduce((acc, lines) => acc + lines.length, 0);
+        const sentencesBoxHeight = 90 + totalSentenceLines * 32 + sentenceBlocks.length * 10;
+        const totalHeight = 560 + sentencesBoxHeight + 100;
+
+        canvas.width = width;
+        canvas.height = totalHeight;
+
+        // 1. Background
+        ctx.fillStyle = '#f8fafc';
+        ctx.fillRect(0, 0, width, totalHeight);
+
+        // 2. Top Header Banner (Indigo-Violet Gradient)
+        const grad = ctx.createLinearGradient(0, 0, width, 240);
+        grad.addColorStop(0, '#4f46e5');
+        grad.addColorStop(1, '#7c3aed');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, 230);
+
+        // Header Text
+        ctx.fillStyle = '#e0e7ff';
+        ctx.font = '700 18px Inter, Arial, sans-serif';
+        ctx.fillText('A2 ENGLISH SELF-LEARNING REPORT  •  FIRST CONDITIONAL', padding, 68);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '800 44px Inter, Arial, sans-serif';
+        ctx.fillText(state.student.name, padding, 128);
+
+        const metaText = [
+          `Class/Group: ${state.student.group}`,
+          state.student.id ? `ID: ${state.student.id}` : null,
+          `Date: ${state.student.dateStr}`,
+        ]
+          .filter(Boolean)
+          .join('   |   ');
+        ctx.fillStyle = '#e0e7ff';
+        ctx.font = '500 20px Inter, Arial, sans-serif';
+        ctx.fillText(metaText, padding, 172);
+
+        // Overall Score Badge on Top Right
+        drawRoundRect(ctx, width - padding - 210, 52, 210, 126, 20);
+        ctx.fillStyle = 'rgba(255,255,255,0.18)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#e0e7ff';
+        ctx.font = '700 16px Inter, Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('OVERALL SCORE', width - padding - 105, 88);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '800 52px Inter, Arial, sans-serif';
+        ctx.fillText(`${pct}%`, width - padding - 105, 148);
+        ctx.textAlign = 'left';
+
+        // 3. Score Cards Row (4 Cards)
+        const cardsY = 270;
+        const cardGap = 24;
+        const cardW = (contentWidth - cardGap * 3) / 4;
+        const cardH = 140;
+
+        const scoreCards = [
+          { title: 'COMPREHENSION', val: `${state.compScore} / 5`, color: '#6d28d9', bg: '#f5f3ff', border: '#ddd6fe' },
+          { title: 'SENTENCE ORDER', val: `${state.orderScore} / 10`, color: '#1d4ed8', bg: '#eff6ff', border: '#bfdbfe' },
+          { title: 'MATCHING HALVES', val: `${state.matchScore} / 10`, color: '#047857', bg: '#ecfdf5', border: '#a7f3d0' },
+          { title: 'MY LIFE WRITING', val: '10 / 10', color: '#b45309', bg: '#fffbeb', border: '#fde68a' },
+        ];
+
+        scoreCards.forEach((c, idx) => {
+          const x = padding + idx * (cardW + cardGap);
+          drawRoundRect(ctx, x, cardsY, cardW, cardH, 18);
+          ctx.fillStyle = c.bg;
+          ctx.fill();
+          ctx.strokeStyle = c.border;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          ctx.textAlign = 'center';
+          ctx.fillStyle = '#475569';
+          ctx.font = '700 15px Inter, Arial, sans-serif';
+          ctx.fillText(c.title, x + cardW / 2, cardsY + 46);
+
+          ctx.fillStyle = c.color;
+          ctx.font = '800 40px Inter, Arial, sans-serif';
+          ctx.fillText(c.val, x + cardW / 2, cardsY + 104);
+        });
+        ctx.textAlign = 'left';
+
+        // 4. Grammar Mastery Note
+        const noteY = 445;
+        drawRoundRect(ctx, padding, noteY, contentWidth, 64, 14);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#334155';
+        ctx.font = '600 19px Inter, Arial, sans-serif';
+        ctx.fillText('Formula Practiced:  If + Present Simple (Condition),  will / won\'t + Base Verb (Result)', padding + 24, noteY + 39);
+
+        // 5. Personal Sentences Box
+        const boxY = 540;
+        drawRoundRect(ctx, padding, boxY, contentWidth, sentencesBoxHeight, 22);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#0f172a';
+        ctx.font = '800 24px Inter, Arial, sans-serif';
+        ctx.fillText('Student\'s 10 First Conditional Sentences (Personal Life)', padding + 30, boxY + 50);
+
+        // Divider line
+        ctx.beginPath();
+        ctx.moveTo(padding + 30, boxY + 68);
+        ctx.lineTo(width - padding - 30, boxY + 68);
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Render each wrapped sentence
+        let cursorY = boxY + 106;
+        ctx.font = '500 22px Inter, Arial, sans-serif';
+        ctx.fillStyle = '#1e293b';
+
+        sentenceBlocks.forEach((lines) => {
+          lines.forEach((line) => {
+            ctx.fillText(line, padding + 30, cursorY);
+            cursorY += 32;
+          });
+          cursorY += 10;
+        });
+
+        // 6. Footer Signature
+        ctx.fillStyle = '#64748b';
+        ctx.font = '500 16px Inter, Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Generated by First Conditional Lab (A2 Self-Learning Experience)', width / 2, totalHeight - 38);
+        ctx.textAlign = 'left';
+
+        // 7. Export as high-quality JPG
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+        const safeName = state.student.name.replace(/[^a-z0-9]+/gi, '_').replace(/^_|_$/g, '');
+        const link = document.createElement('a');
+        link.download = `First_Conditional_Report_${safeName || 'Student'}.jpg`;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        showToast('Report downloaded as JPG!', 'success');
+      } catch (err) {
+        console.error('JPG Generation Error:', err);
+        showToast('Could not generate JPG. Please try again.', 'error');
+      }
+    }
+
+    /** Reset everything for a new student session */
+    function restartLab() {
+      state.currentStep = 0;
+      state.maxStepReached = 0;
+      state.student = { name: '', group: '', id: '', dateStr: '' };
+      state.compAnswers = Array(COMPREHENSION_QUESTIONS.length).fill(null);
+      state.compChecked = false;
+      state.compScore = 0;
+      state.orderChecked = false;
+      state.orderScore = 0;
+      state.matchChecked = false;
+      state.matchScore = 0;
+      state.writingAnswers = Array(WRITING_PROMPTS.length).fill('');
+
+      // Reset UI controls
+      document.getElementById('signin-form').reset();
+      document.getElementById('header-student-badge').classList.add('hidden');
+      document.getElementById('header-student-badge').classList.remove('flex');
+
+      document.getElementById('btn-check-comp').classList.remove('hidden');
+      document.getElementById('btn-next-from-comp').classList.add('hidden');
+      document.getElementById('comp-feedback-banner').classList.add('hidden');
+      document.getElementById('comp-score-pill').textContent = '5 Questions';
+
+      document.getElementById('btn-check-ordering').classList.remove('hidden');
+      document.getElementById('btn-next-from-order').classList.add('hidden');
+      document.getElementById('order-feedback-banner').classList.add('hidden');
+      document.getElementById('order-score-pill').textContent = '0 / 10 Checked';
+
+      document.getElementById('btn-check-matching').classList.remove('hidden');
+      document.getElementById('btn-next-from-match').classList.add('hidden');
+      document.getElementById('btn-reset-matches').classList.remove('hidden');
+      document.getElementById('match-feedback-banner').classList.add('hidden');
+      document.getElementById('match-corrections').classList.add('hidden');
+
+      // Re-initialize activities
+      renderComprehension();
+      initOrdering();
+      initMatching();
+      renderWriting();
+      goToStep(0);
+      showToast('Ready for a new student session!', 'info');
+    }
+
+    /*************************************************************************
+     * 12. INITIALIZE ON LOAD
+     *************************************************************************/
+    window.addEventListener('DOMContentLoaded', () => {
+      initAnalysis();
+      renderComprehension();
+      initOrdering();
+      initMatching();
+      renderWriting();
+    });
+  </script>
+</body>
+</html>
